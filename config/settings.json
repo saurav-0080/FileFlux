@@ -1,0 +1,9 @@
+{
+    "default_scan_path":"",
+    "recursive_scan": true,
+    "create_missing_folders": true,
+    "enable_logging": true,
+    "delete_empty_folders": false,
+    "duplicate_detection": true,
+    "max_file_size_mb": 500
+}
