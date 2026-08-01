@@ -25,3 +25,7 @@ class InvalidRuleError(OrganizerError):
 class DuplicateFileError(OrganizerError):
     """Raised when a duplicate file conflict can't be resolved automatically."""
     pass
+
+class ScanError(OrganizerError):
+    """Raised when a directory scan fails (invalid path, permission denied, etc)."""
+    pass
