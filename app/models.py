@@ -9,6 +9,7 @@ source of truth for what a "file record" contains.
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 
 @dataclass
@@ -25,6 +26,13 @@ class FileInfo:
         created_time: When the file was created.
         modified_time: When the file was last modified.
         is_hidden: Whether the file is a hidden file (starts with a dot).
+        category: The category this file was sorted into (e.g. "Images"),
+            set by the rule engine. None until categorized.
+        destination_path: Where the organizer plans to move this file,
+            or where it was actually moved. None until planned.
+        moved: Whether this file has actually been moved successfully.
+        error_message: If the move failed, a description of what went
+            wrong. None if there was no error.
     """
     name: str
     extension: str
@@ -34,3 +42,7 @@ class FileInfo:
     created_time: datetime
     modified_time: datetime
     is_hidden: bool
+    category :Optional[str]=None
+    destination_path: Optional[Path]=None
+    moved:bool =False
+    error_message:Optional[str]=None
