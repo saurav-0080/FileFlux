@@ -1,30 +1,27 @@
 # Smart File Organizer
 
-A Python automation tool that scans a directory, organizes files into 
-folders by type, detects and flags duplicates, and keeps a full log of 
-every action so changes can be reviewed or undone.
+A Python automation tool that scans a directory, organizes files into
+folders by type, detects duplicates, and keeps a full log of every
+action so changes can be reviewed or undone.
 
 ## Problem It Solves
 
-Downloads folders, desktops, and project directories accumulate 
-hundreds of unsorted files over time. This tool automates the cleanup: 
-sort by file type, catch duplicate copies wasting disk space, and keep 
-a record of what moved where — without deleting anything blindly.
+Downloads folders, desktops, and project directories accumulate
+hundreds of unsorted files over time. This tool automates the cleanup:
+sort by file type, handle duplicate filenames safely, and keep a record
+of what moved where — without deleting anything blindly.
 
 ## Features
 
-- **Organize by extension** — sorts files into folders (Images, Documents, 
-  Videos, etc.) based on file type
-- **Duplicate detection** — identifies duplicate files by content hash, 
-  not just filename
-- **Logging** — every file move is recorded in `logs/organizer.log` for 
-  full traceability
-- **Statistics** — summary report after each run (files moved, duplicates 
-  found, space reclaimed)
-- **Undo** — reverses the last organization run using the log, in case 
-  something gets sorted wrong
-- **SQLite persistence** — tracks file history in a local database instead 
-  of relying only on log files
+- ✔ Organize files by extension — sorts into Images, Documents, Videos, etc.
+- ✔ Recursive scanning — optionally scan subfolders
+- ✔ Automatic folder creation — category folders created on the fly
+- ✔ Duplicate filename handling — never overwrites existing files
+- ✔ Logging — every move recorded in `logs/organizer.log`
+- ✔ Statistics — summary report after each run (files moved, errors, time taken)
+- ✔ Duplicate detection — identifies duplicate files by content hash
+- ✔ Undo — reverses the last organize run using the move log
+- ✔ SQLite persistence — tracks file history in a local database
 
 ## Tech Stack
 
@@ -34,15 +31,15 @@ a record of what moved where — without deleting anything blindly.
 
 ## Project Status
 
-🚧 In active development. Currently at project setup / foundation stage — 
-core organizing logic not yet implemented.
+🚧 In active development. Core organizing engine complete — duplicate
+detection and undo functionality in progress.
 
 ## Installation
 
 ```bash
 git clone <your-repo-url>
 cd Smart-File-Organizer
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
@@ -50,12 +47,12 @@ pip install -r requirements.txt
 ## Usage
 
 ```bash
-python main.py
+python3 main.py
 ```
 
-*(Usage instructions will be expanded as core features are built.)*
+Enter the folder path when prompted, then confirm to organize.
 
 ## License
 
-This project is licensed under the MIT License — see [LICENSE](LICENSE) 
+This project is licensed under the MIT License — see [LICENSE](LICENSE)
 for details.

@@ -14,6 +14,8 @@ from app.exceptions import ConfigurationError, ScanError
 from app.constants import APP_NAME, APP_VERSION
 from app.scanner import scan
 from app.utils import format_size
+import time
+from app.organizer import Organizer
 
 
 def main() -> None:
@@ -63,6 +65,29 @@ def main() -> None:
 
     print(f"\nAverage File Size: {format_size(stats.average_size)}")
     logger.info("Startup complete")
+    
+    try:
+        confirm = input("\nOrganize these files? (y/n): ").strip().lower()
+    except KeyboardInterrupt:
+        print("\nCancelled.")
+        return
+
+    if confirm != "y":
+        print("Exiting without organizing.")
+        return
+    start_time = time.time()
+    org = Organizer(target_directory, rules)
+    org.organize(files)
+    elapsed = time.time() - start_time
+
+    summary = org.create_summary(files, elapsed)
+
+    print(f"\nFiles Scanned  : {summary['files_scanned']}")
+    print(f"Files Moved    : {summary['files_moved']}")
+    print(f"Skipped        : {summary['skipped']}")
+    print(f"Errors         : {summary['errors']}")
+    print(f"Folders Created: {summary['folders_created']}")
+    print(f"Time Taken     : {summary['time_taken']} sec")
 
 
 if __name__ == "__main__":
