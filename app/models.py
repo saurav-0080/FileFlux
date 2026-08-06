@@ -46,3 +46,6 @@ class FileInfo:
     destination_path: Optional[Path]=None
     moved:bool =False
     error_message:Optional[str]=None
+    sha256_hash: Optional[str] = None
+    is_duplicate: bool = False
+    duplicate_of: Optional[str] = None

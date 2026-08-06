@@ -16,6 +16,7 @@ from app.scanner import scan
 from app.utils import format_size
 import time
 from app.organizer import Organizer
+from app.duplicate_detector import DuplicateDetector
 
 
 def main() -> None:
@@ -65,6 +66,13 @@ def main() -> None:
 
     print(f"\nAverage File Size: {format_size(stats.average_size)}")
     logger.info("Startup complete")
+    detector = DuplicateDetector(files)
+    detector.find_duplicates()
+    duplicates = [f for f in files if f.is_duplicate]
+    if duplicates:
+        print(f"\nDuplicates Found: {len(duplicates)}")
+    else:
+        print("\nNo duplicates found.")
     
     try:
         confirm = input("\nOrganize these files? (y/n): ").strip().lower()
