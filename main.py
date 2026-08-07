@@ -17,6 +17,9 @@ from app.utils import format_size
 import time
 from app.organizer import Organizer
 from app.duplicate_detector import DuplicateDetector
+import sys
+from app import database, history
+from app.undo import UndoManager
 
 
 def main() -> None:
@@ -99,4 +102,26 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == "undo":
+        conn = database.connect()
+        database.create_tables(conn)
+        manager = UndoManager(conn)
+        result = manager.undo_last_session()
+        print(f"\nUndo Complete")
+        print(f"Restored : {result['restored']}")
+        print(f"Skipped  : {result['skipped']}")
+        print(f"Failed   : {result['failed']}")
+        database.close(conn)
+
+    elif len(sys.argv) > 1 and sys.argv[1] == "history":
+        conn = database.connect()
+        database.create_tables(conn)
+        stats = history.get_statistics(conn)
+        print(f"\nFileFlux History")
+        print(f"Total Moves   : {stats['total_moves']}")
+        print(f"Total Errors  : {stats['total_errors']}")
+        print(f"Total Sessions: {stats['total_sessions']}")
+        database.close(conn)
+
+    else:
+        main()

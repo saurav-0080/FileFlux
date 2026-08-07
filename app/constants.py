@@ -6,7 +6,7 @@ if a folder name or filename ever needs to change, it changes here once.
 """
 
 # App metadata
-APP_NAME: str = "Smart File Organizer"
+APP_NAME: str = "FileFlux"
 APP_VERSION: str = "0.1.0"
 
 # Config paths

@@ -1,4 +1,4 @@
-# Smart File Organizer
+# FileFlux
 
 A Python automation tool that scans a directory, organizes files into
 folders by type, detects duplicates, and keeps a full log of every

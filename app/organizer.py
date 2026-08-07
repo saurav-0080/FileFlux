@@ -15,6 +15,8 @@ from typing import Dict, List
 from app.models import FileInfo
 from app.rule_engine import get_category
 from app.logger import setup_logger
+from datetime import datetime
+from app import database, history
 
 logger = setup_logger()
 
@@ -30,14 +32,12 @@ class Organizer:
     """
 
     def __init__(self, base_directory: Path, rules: Dict[str, List[str]]):
-        """
-        Args:
-            base_directory: The folder being organized.
-            rules: The rules dictionary, typically from load_rules().
-        """
-        self.base_directory = base_directory
-        self.rules = rules
-        self.folders_created: set = set()
+     self.base_directory = base_directory
+     self.rules = rules
+     self.folders_created: set = set()
+     self.session_id = f"SESSION-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+     self.conn = database.connect()
+     database.create_tables(self.conn)
 
     def create_category_folder(self, category: str) -> Path:
         """
@@ -118,10 +118,12 @@ class Organizer:
 
             file_info.destination_path = destination
             file_info.moved = True
+            history.record_move(self.conn, self.session_id, file_info)
             file_info.error_message = None
 
         except (PermissionError, OSError) as e:
             file_info.moved = False
+            history.record_error(self.conn, self.session_id, file_info)
             file_info.error_message = str(e)
             logger.warning(f"Failed to move {file_info.name}: {e}")
 
