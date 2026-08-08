@@ -52,6 +52,19 @@ python3 main.py
 
 Enter the folder path when prompted, then confirm to organize.
 
+## CLI Usage
+
+```bash
+python main.py scan ~/Downloads
+python main.py organize ~/Downloads --dry-run
+python main.py organize ~/Downloads
+python main.py duplicates ~/Downloads
+python main.py undo
+python main.py history
+python main.py version
+python main.py --help
+```
+
 ## License
 
 This project is licensed under the MIT License — see [LICENSE](LICENSE)
