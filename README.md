@@ -65,6 +65,17 @@ python main.py version
 python main.py --help
 ```
 
+## Desktop GUI
+
+FileFlux includes a desktop interface built with Tkinter.
+
+```bash
+python main.py gui
+```
+
+Features: folder selection, scanning, dry-run preview, organizing,
+duplicate detection, undo, history, and activity logging.
+
 ## License
 
 This project is licensed under the MIT License — see [LICENSE](LICENSE)
