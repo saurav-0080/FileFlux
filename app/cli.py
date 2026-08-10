@@ -37,6 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
     scan_parser = subparsers.add_parser("scan", help="Scan a directory")
     scan_parser.add_argument("path", help="Directory to scan")
     scan_parser.add_argument("--recursive", action="store_true", help="Scan subfolders")
+    scan_parser.add_argument("--report", action="store_true", help="Save operation report")
 
     # organize
     org_parser = subparsers.add_parser("organize", help="Organize files")
@@ -44,6 +45,7 @@ def build_parser() -> argparse.ArgumentParser:
     org_parser.add_argument("--recursive", action="store_true", help="Scan subfolders")
     org_parser.add_argument("--dry-run", action="store_true", help="Preview without moving files")
     org_parser.add_argument("--verbose", action="store_true", help="Show detailed logs")
+    org_parser.add_argument("--report", action="store_true", help="Save operation report")
 
     # duplicates
     dup_parser = subparsers.add_parser("duplicates", help="Find duplicate files")
@@ -88,6 +90,14 @@ def cmd_scan(args) -> int:
     print(f"Total Size   : {format_size(stats.total_size)}")
     if stats.largest_file:
         print(f"\nLargest File : {stats.largest_file.name} ({format_size(stats.largest_file.size)})")
+
+    if args.report:
+        from app.reports import OperationReport, save_json_report
+        report = OperationReport(operation="scan", files_scanned=stats.total_files, space_processed=stats.total_size)
+        report.finish()
+        path = save_json_report(report)
+        print(f"\nReport saved: {path}")
+
     return 0
 
 
@@ -102,6 +112,7 @@ def cmd_organize(args) -> int:
 
     detector = DuplicateDetector(files)
     detector.find_duplicates()
+    duplicates = sum(1 for f in files if f.is_duplicate)
 
     if args.dry_run:
         from app.rule_engine import get_category
@@ -126,6 +137,25 @@ def cmd_organize(args) -> int:
     print(f"Errors         : {summary['errors']}")
     print(f"Folders Created: {summary['folders_created']}")
     print(f"Time Taken     : {summary['time_taken']} sec")
+
+    if args.report:
+        from app.reports import OperationReport, save_json_report, save_csv_report
+        report = OperationReport(
+            operation="organization",
+            files_scanned=summary['files_scanned'],
+            files_moved=summary['files_moved'],
+            duplicates=duplicates,
+            skipped=summary['skipped'],
+            errors=summary['errors'],
+            space_processed=stats.total_size,
+            duration_seconds=float(summary['time_taken']),
+        )
+        report.completed_at = report.started_at
+        json_path = save_json_report(report)
+        csv_path = save_csv_report(report)
+        print(f"\nReport saved : {json_path}")
+        print(f"CSV saved    : {csv_path}")
+
     return 0
 
 

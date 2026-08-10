@@ -7,3 +7,5 @@ logs/
 .vscode/
 .pytest_cache/
 .env
+reports/*.json
+reports/*.csv

@@ -24,36 +24,31 @@ class MainWindow:
         self.dry_run = tk.BooleanVar()
         self.files = []
         self.stats = None
+        self.last_report = None
         self._build_ui()
 
     def _build_ui(self):
-        # Title
         tk.Label(self.root, text="FileFlux", font=("Helvetica", 18, "bold")).pack(pady=10)
 
-        # Folder selector
         frame = tk.Frame(self.root)
         frame.pack(fill="x", padx=20, pady=5)
         tk.Entry(frame, textvariable=self.selected_path, width=55).pack(side="left", padx=5)
         tk.Button(frame, text="Browse", command=self._browse).pack(side="left")
 
-        # Action buttons
         btn_frame = tk.Frame(self.root)
         btn_frame.pack(pady=10)
         tk.Button(btn_frame, text="Scan", width=12, command=self._scan).pack(side="left", padx=5)
         tk.Button(btn_frame, text="Organize", width=12, command=self._organize).pack(side="left", padx=5)
         tk.Checkbutton(btn_frame, text="Dry Run", variable=self.dry_run).pack(side="left", padx=5)
 
-        # Statistics panel
         stats_frame = tk.LabelFrame(self.root, text="Statistics", padx=10, pady=10)
         stats_frame.pack(fill="x", padx=20, pady=5)
         self.stats_label = tk.Label(stats_frame, text="No scan yet.", justify="left")
         self.stats_label.pack(anchor="w")
 
-        # Progress bar
         self.progress = ttk.Progressbar(self.root, mode="indeterminate")
         self.progress.pack(fill="x", padx=20, pady=5)
 
-        # Activity log
         log_frame = tk.LabelFrame(self.root, text="Activity", padx=10, pady=10)
         log_frame.pack(fill="both", expand=True, padx=20, pady=5)
         self.log_text = tk.Text(log_frame, height=10, state="disabled", wrap="word")
@@ -62,13 +57,13 @@ class MainWindow:
         self.log_text.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
-        # Bottom buttons
         bottom_frame = tk.Frame(self.root)
         bottom_frame.pack(pady=10)
         tk.Button(bottom_frame, text="Duplicates", width=12, command=self._duplicates).pack(side="left", padx=5)
         tk.Button(bottom_frame, text="History", width=12, command=self._history).pack(side="left", padx=5)
         tk.Button(bottom_frame, text="Undo", width=12, command=self._undo).pack(side="left", padx=5)
         tk.Button(bottom_frame, text="About", width=12, command=self._about).pack(side="left", padx=5)
+        tk.Button(bottom_frame, text="View Report", width=12, command=self._view_report).pack(side="left", padx=5)
 
     def _log(self, message: str):
         self.log_text.configure(state="normal")
@@ -162,6 +157,7 @@ class MainWindow:
     def _on_organize_done(self, summary):
         self._log(f"Organized. Moved: {summary['files_moved']}, Errors: {summary['errors']}")
         messagebox.showinfo("Done", f"Files Moved: {summary['files_moved']}\nErrors: {summary['errors']}")
+        self._log("Tip: Click 'View Report' to see the full operation report.")
 
     def _duplicates(self):
         if not self.files:
@@ -205,3 +201,20 @@ class MainWindow:
     def _about(self):
         messagebox.showinfo("About FileFlux",
             "FileFlux v0.1.0\n\nA professional file organization tool.\n\nBuilt with Python + Tkinter + SQLite.")
+
+    def _view_report(self):
+        from app.reports import load_latest_report
+        data = load_latest_report()
+        if not data:
+            messagebox.showinfo("No Report", "No report found. Run an organize operation first.")
+            return
+        msg = (
+            f"Operation       : {data.get('operation', 'N/A').title()}\n"
+            f"Files Scanned   : {data.get('files_scanned', 0)}\n"
+            f"Files Moved     : {data.get('files_moved', 0)}\n"
+            f"Duplicates      : {data.get('duplicates', 0)}\n"
+            f"Errors          : {data.get('errors', 0)}\n"
+            f"Duration        : {data.get('duration_seconds', 0)}s\n"
+            f"Status          : {data.get('status', 'N/A')}"
+        )
+        messagebox.showinfo("Latest Report", msg)

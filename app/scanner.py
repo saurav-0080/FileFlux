@@ -112,7 +112,6 @@ def _has_hidden_parent(entry: Path, root: Path) -> bool:
     return False
 
 @dataclass
-@dataclass
 class ScanStatistics:
     """
     Summary statistics for a completed directory scan.
