@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fileflux"
+version = "1.0.0"
+description = "A professional file organization tool"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+fileflux = "main:run"
+
+[tool.setuptools]
+py-modules = ["main"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
