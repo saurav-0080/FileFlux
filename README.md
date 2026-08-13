@@ -80,3 +80,5 @@ duplicate detection, undo, history, and activity logging.
 
 This project is licensed under the MIT License — see [LICENSE](LICENSE)
 for details.
+## CI Status
+![CI](https://github.com/saurav-0080/FileFlux/actions/workflows/ci.yml/badge.svg)
