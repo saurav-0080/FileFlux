@@ -7,6 +7,7 @@ The database is created automatically if it doesn't exist.
 
 import sqlite3
 from pathlib import Path
+
 from app.logger import setup_logger
 
 logger = setup_logger()

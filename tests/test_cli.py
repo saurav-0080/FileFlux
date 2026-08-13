@@ -1,7 +1,9 @@
 """Unit tests for cli.py"""
 
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from app.cli import build_parser, run_cli
 
 

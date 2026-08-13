@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from app.utils import format_size, get_file_extension, create_directory, is_hidden
+from app.utils import create_directory, format_size, get_file_extension, is_hidden
 
 
 def test_format_size_bytes():

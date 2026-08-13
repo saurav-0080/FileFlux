@@ -7,6 +7,7 @@ using records stored in the SQLite database.
 
 import shutil
 from pathlib import Path
+
 from app import database, history
 from app.logger import setup_logger
 
@@ -47,7 +48,9 @@ class UndoManager:
             else:
                 failed += 1
 
-        logger.info(f"Undo complete. Restored: {restored}, Skipped: {skipped}, Failed: {failed}")
+        logger.info(
+            f"Undo complete. Restored: {restored}, Skipped: {skipped}, Failed: {failed}"
+        )
         return {"restored": restored, "skipped": skipped, "failed": failed}
 
     def undo_file(self, record) -> str:
@@ -100,6 +103,10 @@ class UndoManager:
 
     def mark_as_undone(self, record_id: int) -> None:
         """Mark a database record as undone."""
-        database.execute(self.conn, """
+        database.execute(
+            self.conn,
+            """
             UPDATE file_history SET undone = 1 WHERE id = ?
-        """, (record_id,))
+        """,
+            (record_id,),
+        )

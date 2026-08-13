@@ -2,9 +2,8 @@
 Unit tests for organizer.py
 """
 
-import pytest
-from pathlib import Path
 from datetime import datetime
+
 from app.models import FileInfo
 from app.organizer import Organizer
 

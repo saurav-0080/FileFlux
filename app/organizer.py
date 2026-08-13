@@ -8,15 +8,14 @@ actually changes the filesystem; scanner.py only reads.
 """
 
 import shutil
-import time
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
 
+from app import database, history
+from app.logger import setup_logger
 from app.models import FileInfo
 from app.rule_engine import get_category
-from app.logger import setup_logger
-from datetime import datetime
-from app import database, history
 
 logger = setup_logger()
 
@@ -32,12 +31,12 @@ class Organizer:
     """
 
     def __init__(self, base_directory: Path, rules: Dict[str, List[str]]):
-     self.base_directory = base_directory
-     self.rules = rules
-     self.folders_created: set = set()
-     self.session_id = f"SESSION-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-     self.conn = database.connect()
-     database.create_tables(self.conn)
+        self.base_directory = base_directory
+        self.rules = rules
+        self.folders_created: set = set()
+        self.session_id = f"SESSION-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        self.conn = database.connect()
+        database.create_tables(self.conn)
 
     def create_category_folder(self, category: str) -> Path:
         """
@@ -94,7 +93,9 @@ class Organizer:
             counter += 1
             new_destination = parent / f"{stem}({counter}){suffix}"
 
-        logger.info(f"Duplicate filename resolved: {destination.name} -> {new_destination.name}")
+        logger.info(
+            f"Duplicate filename resolved: {destination.name} -> {new_destination.name}"
+        )
         return new_destination
 
     def move_file(self, file_info: FileInfo) -> FileInfo:

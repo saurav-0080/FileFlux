@@ -6,15 +6,15 @@ for each one, and returns structured FileInfo objects. Does not move,
 rename, or modify any files — this module only reads and reports.
 """
 
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
-from app.models import FileInfo
 from app.exceptions import ScanError
-from app.utils import is_hidden
 from app.logger import setup_logger
-from dataclasses import dataclass
+from app.models import FileInfo
+from app.utils import is_hidden
 
 logger = setup_logger()
 
@@ -46,7 +46,8 @@ def get_file_info(file_path: Path) -> FileInfo:
         )
     except (PermissionError, OSError) as e:
         raise ScanError(f"Could not read metadata for {file_path}: {e}")
-    
+
+
 def scan_directory(directory: Path, recursive: bool = False) -> List[FileInfo]:
     """
     Scan a directory for files and return their metadata.
@@ -111,6 +112,7 @@ def _has_hidden_parent(entry: Path, root: Path) -> bool:
             return True
     return False
 
+
 @dataclass
 class ScanStatistics:
     """
@@ -123,6 +125,7 @@ class ScanStatistics:
         smallest_file: The FileInfo of the smallest file found, or None if empty.
         average_size: Average file size in bytes, or 0.0 if empty.
     """
+
     total_files: int
     total_size: int
     largest_file: Optional[FileInfo]
@@ -160,8 +163,11 @@ def collect_statistics(files: List[FileInfo]) -> ScanStatistics:
         smallest_file=smallest,
         average_size=total_size / len(files),
     )
-    
-def scan(directory: Path, recursive: bool = False) -> tuple[List[FileInfo], ScanStatistics]:
+
+
+def scan(
+    directory: Path, recursive: bool = False
+) -> tuple[List[FileInfo], ScanStatistics]:
     """
     Perform a full scan of a directory and return both the file list and statistics.
 

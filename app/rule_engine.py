@@ -9,7 +9,6 @@ editing rules.json, never this module.
 
 from typing import Dict, List
 
-from app.config import load_rules
 from app.constants import DEFAULT_CATEGORY
 
 

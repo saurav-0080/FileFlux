@@ -1,10 +1,11 @@
 """Unit tests for app.scanner"""
 
-import pytest
 from pathlib import Path
 
-from app.scanner import scan_directory, collect_statistics, get_file_info, scan
+import pytest
+
 from app.exceptions import ScanError
+from app.scanner import collect_statistics, scan, scan_directory
 
 
 def test_scan_empty_directory(tmp_path):

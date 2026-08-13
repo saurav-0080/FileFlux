@@ -7,15 +7,13 @@ Run directly: python3 tests/benchmark.py
 """
 
 import os
-import time
-import shutil
 import random
-import string
+import shutil
+import time
 from pathlib import Path
 
-from app.scanner import scan
 from app.duplicate_detector import DuplicateDetector
-
+from app.scanner import scan
 
 BENCHMARK_DIR = Path("benchmark_data")
 SIZES = {

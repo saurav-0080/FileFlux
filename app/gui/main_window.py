@@ -4,17 +4,17 @@ Main window for FileFlux GUI.
 
 import threading
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
 from pathlib import Path
+from tkinter import filedialog, messagebox, ttk
 
-from app.config import load_rules
-from app.scanner import scan
-from app.organizer import Organizer
-from app.duplicate_detector import DuplicateDetector
-from app.undo import UndoManager
 from app import database, history
-from app.utils import format_size
+from app.config import load_rules
+from app.duplicate_detector import DuplicateDetector
 from app.exceptions import ScanError
+from app.organizer import Organizer
+from app.scanner import scan
+from app.undo import UndoManager
+from app.utils import format_size
 
 
 class MainWindow:
@@ -28,18 +28,28 @@ class MainWindow:
         self._build_ui()
 
     def _build_ui(self):
-        tk.Label(self.root, text="FileFlux", font=("Helvetica", 18, "bold")).pack(pady=10)
+        tk.Label(self.root, text="FileFlux", font=("Helvetica", 18, "bold")).pack(
+            pady=10
+        )
 
         frame = tk.Frame(self.root)
         frame.pack(fill="x", padx=20, pady=5)
-        tk.Entry(frame, textvariable=self.selected_path, width=55).pack(side="left", padx=5)
+        tk.Entry(frame, textvariable=self.selected_path, width=55).pack(
+            side="left", padx=5
+        )
         tk.Button(frame, text="Browse", command=self._browse).pack(side="left")
 
         btn_frame = tk.Frame(self.root)
         btn_frame.pack(pady=10)
-        tk.Button(btn_frame, text="Scan", width=12, command=self._scan).pack(side="left", padx=5)
-        tk.Button(btn_frame, text="Organize", width=12, command=self._organize).pack(side="left", padx=5)
-        tk.Checkbutton(btn_frame, text="Dry Run", variable=self.dry_run).pack(side="left", padx=5)
+        tk.Button(btn_frame, text="Scan", width=12, command=self._scan).pack(
+            side="left", padx=5
+        )
+        tk.Button(btn_frame, text="Organize", width=12, command=self._organize).pack(
+            side="left", padx=5
+        )
+        tk.Checkbutton(btn_frame, text="Dry Run", variable=self.dry_run).pack(
+            side="left", padx=5
+        )
 
         stats_frame = tk.LabelFrame(self.root, text="Statistics", padx=10, pady=10)
         stats_frame.pack(fill="x", padx=20, pady=5)
@@ -59,11 +69,21 @@ class MainWindow:
 
         bottom_frame = tk.Frame(self.root)
         bottom_frame.pack(pady=10)
-        tk.Button(bottom_frame, text="Duplicates", width=12, command=self._duplicates).pack(side="left", padx=5)
-        tk.Button(bottom_frame, text="History", width=12, command=self._history).pack(side="left", padx=5)
-        tk.Button(bottom_frame, text="Undo", width=12, command=self._undo).pack(side="left", padx=5)
-        tk.Button(bottom_frame, text="About", width=12, command=self._about).pack(side="left", padx=5)
-        tk.Button(bottom_frame, text="View Report", width=12, command=self._view_report).pack(side="left", padx=5)
+        tk.Button(
+            bottom_frame, text="Duplicates", width=12, command=self._duplicates
+        ).pack(side="left", padx=5)
+        tk.Button(bottom_frame, text="History", width=12, command=self._history).pack(
+            side="left", padx=5
+        )
+        tk.Button(bottom_frame, text="Undo", width=12, command=self._undo).pack(
+            side="left", padx=5
+        )
+        tk.Button(bottom_frame, text="About", width=12, command=self._about).pack(
+            side="left", padx=5
+        )
+        tk.Button(
+            bottom_frame, text="View Report", width=12, command=self._view_report
+        ).pack(side="left", padx=5)
 
     def _log(self, message: str):
         self.log_text.configure(state="normal")
@@ -83,7 +103,9 @@ class MainWindow:
             return None
         path = Path(p)
         if not path.exists() or not path.is_dir():
-            messagebox.showerror("Invalid Path", "The selected path is not a valid directory.")
+            messagebox.showerror(
+                "Invalid Path", "The selected path is not a valid directory."
+            )
             return None
         return path
 
@@ -100,7 +122,7 @@ class MainWindow:
                 self.files = files
                 self.stats = stats
                 self.root.after(0, lambda: self._on_scan_done(stats))
-            except ScanError as e:
+            except ScanError:
                 self.root.after(0, lambda: messagebox.showerror("Scan Error", str(e)))
             finally:
                 self.root.after(0, self.progress.stop)
@@ -108,11 +130,13 @@ class MainWindow:
         threading.Thread(target=run, daemon=True).start()
 
     def _on_scan_done(self, stats):
-        self.stats_label.config(text=(
-            f"Files Found : {stats.total_files}\n"
-            f"Total Size  : {format_size(stats.total_size)}\n"
-            f"Largest     : {stats.largest_file.name if stats.largest_file else 'N/A'}"
-        ))
+        self.stats_label.config(
+            text=(
+                f"Files Found : {stats.total_files}\n"
+                f"Total Size  : {format_size(stats.total_size)}\n"
+                f"Largest     : {stats.largest_file.name if stats.largest_file else 'N/A'}"
+            )
+        )
         self._log(f"Scan complete. {stats.total_files} files found.")
 
     def _organize(self):
@@ -129,13 +153,16 @@ class MainWindow:
                 messagebox.showerror("Error", str(e))
                 return
             from app.rule_engine import get_category
+
             for f in self.files:
                 cat = get_category(f.extension, rules)
                 self._log(f"  {f.name} → {cat}/")
             self._log("Dry run complete. 0 files moved.")
             return
 
-        if not messagebox.askyesno("Confirm", f"Organize {len(self.files)} files in {path}?"):
+        if not messagebox.askyesno(
+            "Confirm", f"Organize {len(self.files)} files in {path}?"
+        ):
             return
 
         self.progress.start()
@@ -147,7 +174,7 @@ class MainWindow:
                 org.organize(self.files)
                 summary = org.create_summary(self.files, 0)
                 self.root.after(0, lambda: self._on_organize_done(summary))
-            except Exception as e:
+            except Exception:
                 self.root.after(0, lambda: messagebox.showerror("Error", str(e)))
             finally:
                 self.root.after(0, self.progress.stop)
@@ -155,8 +182,13 @@ class MainWindow:
         threading.Thread(target=run, daemon=True).start()
 
     def _on_organize_done(self, summary):
-        self._log(f"Organized. Moved: {summary['files_moved']}, Errors: {summary['errors']}")
-        messagebox.showinfo("Done", f"Files Moved: {summary['files_moved']}\nErrors: {summary['errors']}")
+        self._log(
+            f"Organized. Moved: {summary['files_moved']}, Errors: {summary['errors']}"
+        )
+        messagebox.showinfo(
+            "Done",
+            f"Files Moved: {summary['files_moved']}\nErrors: {summary['errors']}",
+        )
         self._log("Tip: Click 'View Report' to see the full operation report.")
 
     def _duplicates(self):
@@ -196,17 +228,25 @@ class MainWindow:
         result = manager.undo_last_session()
         database.close(conn)
         self._log(f"Undo complete. Restored: {result['restored']}")
-        messagebox.showinfo("Undo Complete", f"Restored: {result['restored']}\nSkipped: {result['skipped']}")
+        messagebox.showinfo(
+            "Undo Complete",
+            f"Restored: {result['restored']}\nSkipped: {result['skipped']}",
+        )
 
     def _about(self):
-        messagebox.showinfo("About FileFlux",
-            "FileFlux v0.1.0\n\nA professional file organization tool.\n\nBuilt with Python + Tkinter + SQLite.")
+        messagebox.showinfo(
+            "About FileFlux",
+            "FileFlux v0.1.0\n\nA professional file organization tool.\n\nBuilt with Python + Tkinter + SQLite.",
+        )
 
     def _view_report(self):
         from app.reports import load_latest_report
+
         data = load_latest_report()
         if not data:
-            messagebox.showinfo("No Report", "No report found. Run an organize operation first.")
+            messagebox.showinfo(
+                "No Report", "No report found. Run an organize operation first."
+            )
             return
         msg = (
             f"Operation       : {data.get('operation', 'N/A').title()}\n"

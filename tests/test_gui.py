@@ -1,8 +1,10 @@
 """Unit tests for GUI components."""
 
-import pytest
 import tkinter as tk
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
+
+import pytest
+
 from app.gui.main_window import MainWindow
 
 

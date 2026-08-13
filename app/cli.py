@@ -6,21 +6,21 @@ No business logic lives here — the CLI only receives input,
 validates it, calls the right module, and displays the result.
 """
 
+import argparse
 import sys
 import time
-import argparse
 from pathlib import Path
 
-from app.config import load_settings, load_rules
-from app.scanner import scan
-from app.organizer import Organizer
-from app.duplicate_detector import DuplicateDetector
-from app.undo import UndoManager
 from app import database, history
-from app.utils import format_size
+from app.config import load_rules
 from app.constants import APP_NAME, APP_VERSION
+from app.duplicate_detector import DuplicateDetector
 from app.exceptions import ConfigurationError, ScanError
 from app.logger import setup_logger
+from app.organizer import Organizer
+from app.scanner import scan
+from app.undo import UndoManager
+from app.utils import format_size
 
 logger = setup_logger()
 
@@ -37,15 +37,21 @@ def build_parser() -> argparse.ArgumentParser:
     scan_parser = subparsers.add_parser("scan", help="Scan a directory")
     scan_parser.add_argument("path", help="Directory to scan")
     scan_parser.add_argument("--recursive", action="store_true", help="Scan subfolders")
-    scan_parser.add_argument("--report", action="store_true", help="Save operation report")
+    scan_parser.add_argument(
+        "--report", action="store_true", help="Save operation report"
+    )
 
     # organize
     org_parser = subparsers.add_parser("organize", help="Organize files")
     org_parser.add_argument("path", help="Directory to organize")
     org_parser.add_argument("--recursive", action="store_true", help="Scan subfolders")
-    org_parser.add_argument("--dry-run", action="store_true", help="Preview without moving files")
+    org_parser.add_argument(
+        "--dry-run", action="store_true", help="Preview without moving files"
+    )
     org_parser.add_argument("--verbose", action="store_true", help="Show detailed logs")
-    org_parser.add_argument("--report", action="store_true", help="Save operation report")
+    org_parser.add_argument(
+        "--report", action="store_true", help="Save operation report"
+    )
 
     # duplicates
     dup_parser = subparsers.add_parser("duplicates", help="Find duplicate files")
@@ -67,10 +73,10 @@ def build_parser() -> argparse.ArgumentParser:
 def validate_path(path_str: str) -> Path:
     path = Path(path_str).expanduser()
     if not path.exists():
-        print(f"Error: The specified directory does not exist.")
+        print("Error: The specified directory does not exist.")
         sys.exit(3)
     if not path.is_dir():
-        print(f"Error: Please provide a directory, not a file.")
+        print("Error: Please provide a directory, not a file.")
         sys.exit(3)
     return path
 
@@ -89,11 +95,18 @@ def cmd_scan(args) -> int:
     print(f"\nFiles Found  : {stats.total_files}")
     print(f"Total Size   : {format_size(stats.total_size)}")
     if stats.largest_file:
-        print(f"\nLargest File : {stats.largest_file.name} ({format_size(stats.largest_file.size)})")
+        print(
+            f"\nLargest File : {stats.largest_file.name} ({format_size(stats.largest_file.size)})"
+        )
 
     if args.report:
         from app.reports import OperationReport, save_json_report
-        report = OperationReport(operation="scan", files_scanned=stats.total_files, space_processed=stats.total_size)
+
+        report = OperationReport(
+            operation="scan",
+            files_scanned=stats.total_files,
+            space_processed=stats.total_size,
+        )
         report.finish()
         path = save_json_report(report)
         print(f"\nReport saved: {path}")
@@ -116,7 +129,8 @@ def cmd_organize(args) -> int:
 
     if args.dry_run:
         from app.rule_engine import get_category
-        print(f"\nDRY RUN MODE — No files will be moved.\n")
+
+        print("\nDRY RUN MODE — No files will be moved.\n")
         for f in files:
             category = get_category(f.extension, rules)
             print(f"  {f.name} → {category}/")
@@ -139,16 +153,17 @@ def cmd_organize(args) -> int:
     print(f"Time Taken     : {summary['time_taken']} sec")
 
     if args.report:
-        from app.reports import OperationReport, save_json_report, save_csv_report
+        from app.reports import OperationReport, save_csv_report, save_json_report
+
         report = OperationReport(
             operation="organization",
-            files_scanned=summary['files_scanned'],
-            files_moved=summary['files_moved'],
+            files_scanned=summary["files_scanned"],
+            files_moved=summary["files_moved"],
             duplicates=duplicates,
-            skipped=summary['skipped'],
-            errors=summary['errors'],
+            skipped=summary["skipped"],
+            errors=summary["errors"],
             space_processed=stats.total_size,
-            duration_seconds=float(summary['time_taken']),
+            duration_seconds=float(summary["time_taken"]),
         )
         report.completed_at = report.started_at
         json_path = save_json_report(report)
@@ -170,7 +185,7 @@ def cmd_duplicates(args) -> int:
     detector = DuplicateDetector(files)
     detector.find_duplicates()
     report = detector.generate_duplicate_report()
-    print(f"\nDuplicate Detection")
+    print("\nDuplicate Detection")
     print("─" * 40)
     print(report)
     return 0
@@ -194,7 +209,7 @@ def cmd_undo(args) -> int:
 
     manager = UndoManager(conn)
     result = manager.undo_last_session()
-    print(f"\nUndo Complete")
+    print("\nUndo Complete")
     print(f"Restored : {result['restored']}")
     print(f"Skipped  : {result['skipped']}")
     print(f"Failed   : {result['failed']}")
@@ -206,7 +221,7 @@ def cmd_history(args) -> int:
     conn = database.connect()
     database.create_tables(conn)
     stats = history.get_statistics(conn)
-    print(f"\nFileFlux History")
+    print("\nFileFlux History")
     print("─" * 40)
     print(f"Total Moves   : {stats['total_moves']}")
     print(f"Total Errors  : {stats['total_errors']}")

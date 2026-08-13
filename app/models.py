@@ -34,6 +34,7 @@ class FileInfo:
         error_message: If the move failed, a description of what went
             wrong. None if there was no error.
     """
+
     name: str
     extension: str
     path: Path
@@ -42,10 +43,10 @@ class FileInfo:
     created_time: datetime
     modified_time: datetime
     is_hidden: bool
-    category :Optional[str]=None
-    destination_path: Optional[Path]=None
-    moved:bool =False
-    error_message:Optional[str]=None
+    category: Optional[str] = None
+    destination_path: Optional[Path] = None
+    moved: bool = False
+    error_message: Optional[str] = None
     sha256_hash: Optional[str] = None
     is_duplicate: bool = False
     duplicate_of: Optional[str] = None

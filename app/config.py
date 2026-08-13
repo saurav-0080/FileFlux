@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
-from app.constants import CONFIG_DIR, SETTINGS_FILE, RULES_FILE
+from app.constants import CONFIG_DIR, RULES_FILE, SETTINGS_FILE
 from app.exceptions import ConfigurationError
 
 

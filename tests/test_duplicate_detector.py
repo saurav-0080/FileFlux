@@ -1,10 +1,9 @@
 """Unit tests for duplicate_detector.py"""
 
-import pytest
 from datetime import datetime
-from pathlib import Path
-from app.models import FileInfo
+
 from app.duplicate_detector import DuplicateDetector
+from app.models import FileInfo
 
 
 def make_file(tmp_path, filename, content):

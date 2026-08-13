@@ -1,8 +1,7 @@
 """Unit tests for history.py"""
 
-import pytest
 from datetime import datetime
-from pathlib import Path
+
 from app import database, history
 from app.models import FileInfo
 
@@ -36,7 +35,9 @@ def test_record_move(tmp_path, monkeypatch):
     conn = make_conn(tmp_path, monkeypatch)
     fi = make_file_info(tmp_path)
     history.record_move(conn, "S1", fi)
-    row = database.fetch_one(conn, "SELECT * FROM file_history WHERE session_id = ?", ("S1",))
+    row = database.fetch_one(
+        conn, "SELECT * FROM file_history WHERE session_id = ?", ("S1",)
+    )
     assert row["filename"] == "test.pdf"
     assert row["status"] == "moved"
 

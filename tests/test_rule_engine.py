@@ -2,8 +2,7 @@
 Unit tests for rule_engine.py
 """
 
-import pytest
-from app.rule_engine import get_category, is_supported, get_all_categories
+from app.rule_engine import get_all_categories, get_category, is_supported
 
 # A minimal fake rules dict — no need to load rules.json
 FAKE_RULES = {

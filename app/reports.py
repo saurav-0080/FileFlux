@@ -30,6 +30,7 @@ class FileOperation:
         status: One of MOVED, SKIPPED, ERROR, DUPLICATE.
         error: Error message if the operation failed.
     """
+
     original_path: str
     destination_path: str = ""
     status: str = "MOVED"
@@ -55,6 +56,7 @@ class OperationReport:
         status: Final status — COMPLETED or FAILED.
         file_operations: Per-file operation records (for CSV export).
     """
+
     operation: str
     started_at: datetime = field(default_factory=datetime.now)
     completed_at: Optional[datetime] = None
@@ -97,7 +99,9 @@ class OperationReport:
         return {
             "operation": self.operation,
             "started_at": self.started_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "completed_at": self.completed_at.strftime("%Y-%m-%d %H:%M:%S") if self.completed_at else None,
+            "completed_at": self.completed_at.strftime("%Y-%m-%d %H:%M:%S")
+            if self.completed_at
+            else None,
             "files_scanned": self.files_scanned,
             "files_moved": self.files_moved,
             "duplicates": self.duplicates,
@@ -111,8 +115,12 @@ class OperationReport:
     def format_summary(self) -> str:
         """Return a human-readable text summary of the report."""
         started = self.started_at.strftime("%d %b %Y %H:%M:%S")
-        completed = self.completed_at.strftime("%d %b %Y %H:%M:%S") if self.completed_at else "N/A"
-        size_gb = self.space_processed / (1024 ** 3)
+        completed = (
+            self.completed_at.strftime("%d %b %Y %H:%M:%S")
+            if self.completed_at
+            else "N/A"
+        )
+        size_gb = self.space_processed / (1024**3)
 
         return (
             f"\nSmart File Organizer\n"
@@ -172,7 +180,9 @@ def save_csv_report(report: OperationReport) -> Path:
         writer = csv.writer(f)
         writer.writerow(["original_path", "destination_path", "status", "error"])
         for op in report.file_operations:
-            writer.writerow([op.original_path, op.destination_path, op.status, op.error])
+            writer.writerow(
+                [op.original_path, op.destination_path, op.status, op.error]
+            )
 
     logger.info(f"CSV report saved: {file_path}")
     return file_path

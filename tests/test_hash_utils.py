@@ -1,8 +1,6 @@
 """Unit tests for hash_utils.py"""
 
-import pytest
-from pathlib import Path
-from app.hash_utils import calculate_sha256, calculate_md5, verify_hash
+from app.hash_utils import calculate_md5, calculate_sha256, verify_hash
 
 
 def test_same_content_same_hash(tmp_path):

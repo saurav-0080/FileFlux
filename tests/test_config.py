@@ -1,9 +1,10 @@
 """Unit tests for app.config"""
 
-import pytest
 from pathlib import Path
 
-from app.config import load_settings, load_rules, get_setting, _load_json_file
+import pytest
+
+from app.config import _load_json_file, get_setting, load_rules, load_settings
 from app.exceptions import ConfigurationError
 
 

@@ -1,15 +1,10 @@
 import json
-from datetime import datetime
-from pathlib import Path
-
-import pytest
 
 from app.reports import (
-    FileOperation,
     OperationReport,
-    save_json_report,
-    save_csv_report,
     load_latest_report,
+    save_csv_report,
+    save_json_report,
 )
 
 
@@ -43,7 +38,9 @@ def test_add_file_operation():
 
 
 def test_format_summary_contains_fields():
-    report = OperationReport(operation="organization", files_scanned=100, files_moved=90)
+    report = OperationReport(
+        operation="organization", files_scanned=100, files_moved=90
+    )
     report.finish()
     summary = report.format_summary()
     assert "100" in summary

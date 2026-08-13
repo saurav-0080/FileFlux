@@ -6,12 +6,11 @@ size first — only files sharing the same size are hashed, which avoids
 unnecessary computation on large directories.
 """
 
-from pathlib import Path
 from typing import Dict, List
 
-from app.models import FileInfo
 from app.hash_utils import calculate_sha256
 from app.logger import setup_logger
+from app.models import FileInfo
 from app.utils import format_size
 
 logger = setup_logger()
@@ -41,7 +40,7 @@ class DuplicateDetector:
 
         hash_map: Dict[str, FileInfo] = {}
 
-        for size, group in size_groups.items():
+        for group in size_groups.values():
             if len(group) < 2:
                 continue  # unique size — cannot be a duplicate
 
@@ -54,14 +53,18 @@ class DuplicateDetector:
                     if file_hash in hash_map:
                         file_info.is_duplicate = True
                         file_info.duplicate_of = hash_map[file_hash].name
-                        logger.warning(f"Duplicate found: {file_info.name} -> {hash_map[file_hash].name}")
+                        logger.warning(
+                            f"Duplicate found: {file_info.name} -> {hash_map[file_hash].name}"
+                        )
                     else:
                         hash_map[file_hash] = file_info
 
                 except (PermissionError, OSError) as e:
                     logger.warning(f"Could not hash {file_info.name}: {e}")
 
-        logger.info(f"Detection finished. Duplicates: {sum(1 for f in self.files if f.is_duplicate)}")
+        logger.info(
+            f"Detection finished. Duplicates: {sum(1 for f in self.files if f.is_duplicate)}"
+        )
         return self.files
 
     def group_duplicates(self) -> List[List[FileInfo]]:

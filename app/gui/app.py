@@ -5,6 +5,7 @@ Initializes Tkinter and launches the main window.
 """
 
 import tkinter as tk
+
 from app.gui.main_window import MainWindow
 
 
@@ -14,5 +15,5 @@ def launch():
     root.title("FileFlux")
     root.geometry("700x600")
     root.resizable(True, True)
-    app = MainWindow(root)
+    MainWindow(root)
     root.mainloop()

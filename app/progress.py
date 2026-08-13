@@ -6,8 +6,7 @@ Core modules (scanner, organizer, duplicate detector) report progress
 through this structure — the GUI layer reads it and updates the UI.
 """
 
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
 
 
 @dataclass
@@ -21,6 +20,7 @@ class Progress:
         total: Total number of items to process.
         message: Optional detail message for the current step.
     """
+
     operation: str
     current: int = 0
     total: int = 0
