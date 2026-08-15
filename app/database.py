@@ -66,3 +66,43 @@ def close(conn: sqlite3.Connection) -> None:
     """Close the database connection."""
     conn.close()
     logger.info("Database connection closed")
+
+
+def create_indexes(conn: sqlite3.Connection) -> None:
+    """Create indexes for frequently queried columns."""
+    conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_sha256_hash
+        ON file_history (sha256_hash)
+    """)
+    conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_session_id
+        ON file_history (session_id)
+    """)
+    conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_status
+        ON file_history (status)
+    """)
+    conn.commit()
+
+
+def initialize(conn: sqlite3.Connection) -> None:
+    """Run all setup steps: tables + indexes."""
+    create_tables(conn)
+    create_indexes(conn)
+
+
+def connect_safe() -> sqlite3.Connection:
+    """
+    Connect to database with error handling.
+    Raises DatabaseError on failure.
+    """
+    from app.exceptions import DatabaseError
+
+    try:
+        conn = connect()
+        initialize(conn)
+        return conn
+    except sqlite3.OperationalError as e:
+        raise DatabaseError(f"Database connection failed: {e}")
+    except sqlite3.DatabaseError as e:
+        raise DatabaseError(f"Database error: {e}")
