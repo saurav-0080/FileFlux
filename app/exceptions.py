@@ -1,27 +1,35 @@
 """
-Custom exception classes for the Smart File Organizer.
-
-Using specific exception types instead of generic ones makes error
-handling clearer — callers can catch exactly the failure they expect,
-and error messages describe what actually went wrong.
+Application exception hierarchy for FileFlux.
 """
 
 
-class OrganizerError(Exception):
-    """Base exception for all Smart File Organizer errors."""
+class FileFluxError(Exception):
+    """Base exception for all FileFlux errors."""
 
 
-class ConfigurationError(OrganizerError):
-    """Raised when a configuration file is missing, unreadable, or invalid."""
+class ScanError(FileFluxError):
+    """Raised when directory scanning fails."""
 
 
-class InvalidRuleError(OrganizerError):
-    """Raised when a rule in rules.json is malformed or conflicting."""
+class OrganizerError(FileFluxError):
+    """Raised when file organization fails."""
 
 
-class DuplicateFileError(OrganizerError):
-    """Raised when a duplicate file conflict can't be resolved automatically."""
+class ConfigurationError(FileFluxError):
+    """Raised when configuration is invalid or corrupt."""
 
 
-class ScanError(OrganizerError):
-    """Raised when a directory scan fails (invalid path, permission denied, etc)."""
+class DatabaseError(FileFluxError):
+    """Raised when database operations fail."""
+
+
+class ValidationError(FileFluxError):
+    """Raised when path or input validation fails."""
+
+
+class PermissionError(FileFluxError):
+    """Raised when file system permission is denied."""
+
+
+class SafetyError(FileFluxError):
+    """Raised when a safety check blocks an operation."""
