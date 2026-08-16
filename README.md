@@ -1,84 +1,90 @@
 # FileFlux
 
-A Python automation tool that scans a directory, organizes files into
-folders by type, detects duplicates, and keeps a full log of every
-action so changes can be reviewed or undone.
+![CI](https://github.com/saurav-0080/FileFlux/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.11%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## Problem It Solves
+A desktop file organization tool built with Python. Scan directories, organize files by type, detect duplicates, and undo operations — all from a GUI or CLI.
 
-Downloads folders, desktops, and project directories accumulate
-hundreds of unsorted files over time. This tool automates the cleanup:
-sort by file type, handle duplicate filenames safely, and keep a record
-of what moved where — without deleting anything blindly.
+## Screenshots
+
+![Startup](docs/screenshots/startup.png)
+![After Scan](docs/screenshots/scan.png)
 
 ## Features
 
-- ✔ Organize files by extension — sorts into Images, Documents, Videos, etc.
-- ✔ Recursive scanning — optionally scan subfolders
-- ✔ Automatic folder creation — category folders created on the fly
-- ✔ Duplicate filename handling — never overwrites existing files
-- ✔ Logging — every move recorded in `logs/organizer.log`
-- ✔ Statistics — summary report after each run (files moved, errors, time taken)
-- ✔ Duplicate detection — identifies duplicate files by content hash
-- ✔ Undo — reverses the last organize run using the move log
-- ✔ SQLite persistence — tracks file history in a local database
+- Recursive directory scanning
+- Rule-based file organization by extension
+- Duplicate detection using size-grouping + SHA-256
+- SQLite operation history
+- Undo last organize session
+- JSON and CSV operation reports
+- Dark-themed Tkinter GUI
+- Full CLI with 6 subcommands
+- Docker support
+- GitHub Actions CI pipeline (Python 3.11, 3.12, 3.13)
+- Path safety validation and protected directory checks
 
-## Tech Stack
+## Quick Start
 
-- Python 3
-- SQLite (via `sqlite3`)
-- pytest (testing)
-
-## Project Status
-
-🚧 In active development. Core organizing engine complete — duplicate
-detection and undo functionality in progress.
-
-## Installation
-
-```bash
-git clone <your-repo-url>
-cd Smart-File-Organizer
-python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-## Usage
-
+### GUI
 ```bash
 python3 main.py
 ```
 
-Enter the folder path when prompted, then confirm to organize.
-
-## CLI Usage
-
+### CLI
 ```bash
-python main.py scan ~/Downloads
-python main.py organize ~/Downloads --dry-run
-python main.py organize ~/Downloads
-python main.py duplicates ~/Downloads
-python main.py undo
-python main.py history
-python main.py version
-python main.py --help
+fileflux scan ~/Downloads
+fileflux organize ~/Downloads
+fileflux duplicates ~/Downloads
+fileflux history
+fileflux undo
+fileflux version
 ```
 
-## Desktop GUI
-
-FileFlux includes a desktop interface built with Tkinter.
-
+### Docker
 ```bash
-python main.py gui
+docker pull ghcr.io/saurav-0080/fileflux:latest
+docker run --rm -v ~/Downloads:/data fileflux:1.0.0 scan /data
 ```
 
-Features: folder selection, scanning, dry-run preview, organizing,
-duplicate detection, undo, history, and activity logging.
+## Installation
+
+```bash
+git clone https://github.com/saurav-0080/FileFlux.git
+cd FileFlux
+pip install -e .
+```
+
+## Project Structure
+FileFlux/
+├── app/
+│ ├── cli.py # CLI entry point
+│ ├── scanner.py # Directory scanner
+│ ├── organizer.py # File organizer
+│ ├── duplicate_detector.py
+│ ├── database.py # SQLite layer
+│ ├── history.py # Operation history
+│ ├── undo.py # Undo system
+│ ├── safety.py # Path validation
+│ ├── reports.py # JSON/CSV reports
+│ └── gui/ # Tkinter GUI
+├── tests/ # 88 passing tests
+├── Dockerfile
+├── .github/workflows/ci.yml
+└── pyproject.toml
+
+
+## Tech Stack
+
+- Python 3.11+
+- Tkinter (GUI)
+- SQLite via sqlite3
+- pytest + pytest-cov
+- ruff (lint + format)
+- Docker
+- GitHub Actions
 
 ## License
 
-This project is licensed under the MIT License — see [LICENSE](LICENSE)
-for details.
-## CI Status
-![CI](https://github.com/saurav-0080/FileFlux/actions/workflows/ci.yml/badge.svg)
+MIT

@@ -1,23 +1,19 @@
+#!/usr/bin/env python3
 """
-Entry point for FileFlux.
-
-Supports both CLI and GUI modes.
+FileFlux entry point.
+Launches CLI if arguments are provided, otherwise opens the GUI.
 """
-
 import sys
 
 
-def run():
-    """Entry point for the packaged CLI command."""
-    if len(sys.argv) > 1 and sys.argv[1] == "gui":
-        from app.gui.app import launch
-
-        launch()
-    else:
+def main():
+    if len(sys.argv) > 1:
         from app.cli import run_cli
-
-        sys.exit(run_cli())
+        run_cli()
+    else:
+        from app.gui.app import launch
+        launch()
 
 
 if __name__ == "__main__":
-    run()
+    main()
