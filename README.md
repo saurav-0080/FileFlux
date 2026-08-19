@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-A desktop file organization tool built with Python. Scan directories, organize files by type, detect duplicates, and undo operations — all from a GUI or CLI.
+A desktop file organization tool built with Python. Scan directories, organize files by type, detect duplicates, and undo operations — all from a GUI or CLI . This is tool for better organizing the directories in one click.
 
 ## Screenshots
 
